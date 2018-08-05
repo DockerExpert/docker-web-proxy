@@ -1,4 +1,4 @@
- version: "3.7"
+version: "3.7"
 
 services:
 
@@ -26,4 +26,24 @@ services:
       - 80
     volumes:
       - .:/app:delegated
-      - ~/.composer/cache:/.composer/cache:cached
+
+  database:
+    build: .docker/database
+    container_name: ${NAMESPACE}_database
+    image: ${NAMESPACE}:database
+    ports:
+      - "${DB_PORT}:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./.docker/database/inital-import:/docker-entrypoint-initdb.d:delegated
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: ${NAMESPACE}_mailhog
+    ports:
+      - "8025:8025"
