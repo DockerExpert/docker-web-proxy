@@ -2,7 +2,7 @@ FROM webdevops/php-apache-dev:7.0
 
 RUN apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get autoremove -y
 
-# COPY php/conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
+COPY php/conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
