@@ -1,0 +1,29 @@
+ version: "3.7"
+
+services:
+
+  webserver-proxy:
+    build: .docker/webserver-proxy
+    image: ${NAMESPACE}:webserver-proxy
+    container_name: ${NAMESPACE}_webserver-proxy
+    restart: always
+    depends_on:
+      - webserver
+    ports:
+      - 80:80
+      - 443:443
+
+  webserver:
+    build: .docker/webserver
+    container_name: ${NAMESPACE}_webserver
+    image: ${NAMESPACE}:webserver
+    restart: always
+    working_dir: /app
+    depends_on:
+      - database
+      - mailhog
+    expose:
+      - 80
+    volumes:
+      - .:/app:delegated
+      - ~/.composer/cache:/.composer/cache:cached
