@@ -18,14 +18,14 @@ services:
     container_name: ${NAMESPACE}_webserver
     image: ${NAMESPACE}:webserver
     restart: always
-    working_dir: /app
+    working_dir: /usr/local/apache2/htdocs
     depends_on:
       - database
       - mailhog
     expose:
       - 80
     volumes:
-      - .:/app:delegated
+      - .:/usr/local/apache2/htdocs:delegated
 
   database:
     build: .docker/database
