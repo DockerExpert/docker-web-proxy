@@ -35,9 +35,8 @@ services:
     depends_on:
       - database
       - mailhog
-    expose:
-      - 9000
-      - 9001
+    ports:
+      - 9001:9001
     volumes:
       - .:/var/www:delegated
 
