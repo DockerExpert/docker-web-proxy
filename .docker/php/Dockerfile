@@ -63,8 +63,21 @@ RUN pecl install xdebug  \
 ENV WORK_DIR ${WORK_DIR:-/var/www}
 WORKDIR $WORK_DIR
 
-# Install Composer
-#RUN curl -s http://getcomposer.org/installer | php \
-#    && mv composer.phar /usr/local/bin/composer
+# Set Timezone
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Install Ioncube Loader for php 7.0
+RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+    && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
+    && cp ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/ \
+    && rm -rf ioncube \
+    && cd /usr/local/etc/php/conf.d \
+    && touch 00-ioncube.ini \
+    && echo "zend_extension=ioncube_loader_lin_7.0.so" > 00-ioncube.ini
+
+# Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
