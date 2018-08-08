@@ -43,6 +43,7 @@ RUN docker-php-ext-install \
     soap
 
 COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
+COPY /conf/xdebug.ini  /usr/local/etc/php/conf.d/xdebug.ini
 
 RUN set -x \
     && deluser www-data \
