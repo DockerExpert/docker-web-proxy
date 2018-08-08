@@ -42,6 +42,8 @@ RUN docker-php-ext-install \
     zip \
     soap
 
+COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
+
 RUN set -x \
     && deluser www-data \
     && addgroup -g 500 -S www-data \
@@ -79,5 +81,3 @@ RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
-
-COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
