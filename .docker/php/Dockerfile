@@ -2,8 +2,69 @@ FROM php:7.0-fpm-alpine
 
 RUN apk update && apk upgrade
 
-RUN apk add --no-cache bash
+RUN apk add --no-cache --virtual build-dependencies \
+    go \
+    git \
+    libc-dev \
+    bash \
+    libxslt-dev \
+    libmcrypt-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev
 
-#RUN docker-php-ext-install pdo_mysql
+RUN set -xe \
+    && apk add --update \
+        icu \
+    && apk add --no-cache --virtual .php-deps \
+        make \
+    && apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        zlib-dev \
+        icu-dev \
+        g++
 
-COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.dphp-ini-overrides.ini
+# configure libraries
+RUN docker-php-ext-configure gd \
+    --enable-gd-native-ttf \
+    --with-freetype-dir=/usr/include/freetype2 \
+    --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
+    && docker-php-ext-configure hash --with-mhash
+
+# install required extensions
+RUN docker-php-ext-install \
+    bcmath \
+    mysqli \
+    pdo_mysql \
+    mcrypt \
+    opcache \
+    xsl \
+    zip \
+    soap
+
+RUN set -x \
+    && deluser www-data \
+    && addgroup -g 500 -S www-data \
+    && adduser -u 500 -D -S -G www-data www-data
+
+# add mhsendmail (sendmail is forced to use smtp)
+RUN curl -Lsf 'https://storage.googleapis.com/golang/go1.10.3.linux-amd64.tar.gz' | tar -C '/usr/local' -xvzf -
+ENV PATH /usr/local/go/bin:$PATH
+RUN go get github.com/mailhog/mhsendmail
+RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
+
+RUN apk del --purge build-dependencies
+
+# add XDebug for the dev env build
+RUN pecl install xdebug  \
+    && docker-php-ext-enable xdebug
+
+# configure app folder
+ENV WORK_DIR ${WORK_DIR:-/var/www}
+WORKDIR $WORK_DIR
+
+# Install Composer
+#RUN curl -s http://getcomposer.org/installer | php \
+#    && mv composer.phar /usr/local/bin/composer
+
+COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini

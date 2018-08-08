@@ -37,6 +37,7 @@ services:
       - mailhog
     expose:
       - 9000
+      - 9001
     volumes:
       - .:/var/www:delegated
 
@@ -60,3 +61,4 @@ services:
     container_name: ${NAMESPACE}_mailhog
     ports:
       - "8025:8025"
+      - "1025:1025"
