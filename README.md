@@ -1,11 +1,6 @@
 ## docker-web-proxy
 A small example for Nginx HTTPS Proxy using docker-compose 
 for containers based on Apache, PHP 7.0 (ionCube PHP Loader, Zend OPcache, Xdebug), Mysql and Mailhog.
-PHP Container created by 
-https://webdevops.io/
-
-inspired by an article from Dominik Weber: https://dev.to/domysee/setting-up-a-reverse-proxy-with-nginx-and-docker-compose-29jg
-
 
 ### Setup
 
