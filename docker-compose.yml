@@ -18,14 +18,27 @@ services:
     container_name: ${NAMESPACE}_webserver
     image: ${NAMESPACE}:webserver
     restart: always
-    working_dir: /usr/local/apache2/htdocs
+    working_dir: /var/www
+    expose:
+      - 80
+    volumes:
+      - .:/var/www:delegated
+    links:
+      - php
+
+  php:
+    build: .docker/php
+    container_name: ${NAMESPACE}_php
+    image: ${NAMESPACE}:php
+    restart: always
+    working_dir: /var/www
     depends_on:
       - database
       - mailhog
     expose:
-      - 80
+      - 9000
     volumes:
-      - .:/usr/local/apache2/htdocs:delegated
+      - .:/var/www:delegated
 
   database:
     build: .docker/database
