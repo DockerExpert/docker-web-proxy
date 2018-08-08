@@ -2,38 +2,45 @@ FROM php:7.0-fpm-alpine
 
 RUN apk update && apk upgrade
 
-RUN apk add --no-cache bash
-
-# configure libraries
-#RUN docker-php-ext-configure gd \
-#    --enable-gd-native-ttf \
-#    --with-freetype-dir=/usr/include/freetype2 \
-#    --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
-#    && docker-php-ext-configure intl \
-#    && docker-php-ext-configure hash --with-mhash
-
-# install required extensions
-#RUN docker-php-ext-install \
-#    bcmath \
-#    gd \
-#    intl \
-#    mcrypt \
-#    opcache \
-#    pdo_mysql \
-#    xsl \
-#    zip \
-#    json \
-#    iconv \
-#    soap
-
-
-RUN apk --no-cache add --virtual build-dependencies \
+RUN apk add --no-cache --virtual build-dependencies \
     go \
     git \
     libc-dev \
-    && mkdir -p /root/gocode \
-    && export GOPATH=/root/gocode
+    bash \
+    libxslt-dev \
+    libmcrypt-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev
 
+RUN set -xe \
+    && apk add --update \
+        icu \
+    && apk add --no-cache --virtual .php-deps \
+        make \
+    && apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        zlib-dev \
+        icu-dev \
+        g++
+
+# configure libraries
+RUN docker-php-ext-configure gd \
+    --enable-gd-native-ttf \
+    --with-freetype-dir=/usr/include/freetype2 \
+    --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
+    && docker-php-ext-configure hash --with-mhash
+
+# install required extensions
+RUN docker-php-ext-install \
+    bcmath \
+    mysqli \
+    pdo_mysql \
+    mcrypt \
+    opcache \
+    xsl \
+    zip \
+    soap
 
 # add mhsendmail (sendmail is forced to use smtp)
 RUN curl -Lsf 'https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz' | tar -C '/usr/local' -xvzf -
@@ -48,7 +55,7 @@ RUN apk del --purge build-dependencies
 #    && docker-php-ext-enable xdebug
 
 # expose the xdebug port on dev build
-#ENV XDEBUG_EXPOSE_PORT ${XDEBUG_PORT:-9000}
+#ENV XDEBUG_EXPOSE_PORT ${XDEBUG_PORT:-9001}
 #EXPOSE $XDEBUG_EXPOSE_PORT
 
 # configure app folder
