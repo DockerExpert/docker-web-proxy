@@ -54,10 +54,6 @@ RUN apk del --purge build-dependencies
 RUN pecl install xdebug  \
     && docker-php-ext-enable xdebug
 
-# expose the xdebug port on dev build
-ENV XDEBUG_EXPOSE_PORT ${XDEBUG_PORT:-9001}
-EXPOSE $XDEBUG_EXPOSE_PORT
-
 # configure app folder
 ENV WORK_DIR ${WORK_DIR:-/var/www}
 WORKDIR $WORK_DIR

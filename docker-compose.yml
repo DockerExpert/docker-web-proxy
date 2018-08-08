@@ -37,6 +37,7 @@ services:
       - mailhog
     expose:
       - 9000
+      - 9001
     volumes:
       - .:/var/www:delegated
 
