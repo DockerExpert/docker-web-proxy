@@ -59,7 +59,7 @@ ENV WORK_DIR ${WORK_DIR:-/var/www}
 WORKDIR $WORK_DIR
 
 # Install Composer
-#RUN curl -s http://getcomposer.org/installer | php \
-#    && mv composer.phar /usr/local/bin/composer
+RUN curl -s http://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer
 
 COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
