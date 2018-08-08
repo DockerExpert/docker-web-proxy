@@ -55,8 +55,6 @@ ENV PATH /usr/local/go/bin:$PATH
 RUN go get github.com/mailhog/mhsendmail
 RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
 
-RUN apk del --purge build-dependencies
-
 # add XDebug for the dev env build
 RUN pecl install xdebug  \
     && docker-php-ext-enable xdebug
