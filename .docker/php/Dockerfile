@@ -77,5 +77,5 @@ RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-
     && echo "zend_extension=ioncube_loader_lin_7.0.so" > 00-ioncube.ini
 
 # Composer
-#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-#ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
