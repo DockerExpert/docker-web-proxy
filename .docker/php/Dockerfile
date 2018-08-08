@@ -4,6 +4,58 @@ RUN apk update && apk upgrade
 
 RUN apk add --no-cache bash
 
-#RUN docker-php-ext-install pdo_mysql
+# configure libraries
+#RUN docker-php-ext-configure gd \
+#    --enable-gd-native-ttf \
+#    --with-freetype-dir=/usr/include/freetype2 \
+#    --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
+#    && docker-php-ext-configure intl \
+#    && docker-php-ext-configure hash --with-mhash
 
-COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.dphp-ini-overrides.ini
+# install required extensions
+#RUN docker-php-ext-install \
+#    bcmath \
+#    gd \
+#    intl \
+#    mcrypt \
+#    opcache \
+#    pdo_mysql \
+#    xsl \
+#    zip \
+#    json \
+#    iconv \
+#    soap
+
+
+RUN apk --no-cache add --virtual build-dependencies \
+    go \
+    git \
+    libc-dev \
+  && mkdir -p /root/gocode \
+  && export GOPATH=/root/gocode
+#  && rm -rf /root/gocode \
+#  && apk del --purge build-dependencies
+
+# add mhsendmail (sendmail is forced to use smtp)
+RUN curl -Lsf 'https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz' | tar -C '/usr/local' -xvzf -
+ENV PATH /usr/local/go/bin:$PATH
+RUN go get github.com/mailhog/mhsendmail
+RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
+
+# add XDebug for the dev env build
+#RUN pecl install xdebug  \
+#    && docker-php-ext-enable xdebug
+
+# expose the xdebug port on dev build
+#ENV XDEBUG_EXPOSE_PORT ${XDEBUG_PORT:-9000}
+#EXPOSE $XDEBUG_EXPOSE_PORT
+
+# configure app folder
+ENV WORK_DIR ${WORK_DIR:-/var/www}
+WORKDIR $WORK_DIR
+
+# Install Composer
+#RUN curl -s http://getcomposer.org/installer | php \
+#    && mv composer.phar /usr/local/bin/composer
+
+COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
