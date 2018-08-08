@@ -31,16 +31,17 @@ RUN apk --no-cache add --virtual build-dependencies \
     go \
     git \
     libc-dev \
-  && mkdir -p /root/gocode \
-  && export GOPATH=/root/gocode
-#  && rm -rf /root/gocode \
-#  && apk del --purge build-dependencies
+    && mkdir -p /root/gocode \
+    && export GOPATH=/root/gocode
+
 
 # add mhsendmail (sendmail is forced to use smtp)
 RUN curl -Lsf 'https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz' | tar -C '/usr/local' -xvzf -
 ENV PATH /usr/local/go/bin:$PATH
 RUN go get github.com/mailhog/mhsendmail
 RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
+
+RUN apk del --purge build-dependencies
 
 # add XDebug for the dev env build
 #RUN pecl install xdebug  \
