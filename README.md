@@ -7,7 +7,7 @@ for containers based on Apache, PHP 7.0 (ionCube PHP Loader, Zend OPcache, Xdebu
 set your vars in ``.env``
 
     
-### ssign the docker ip in your Hostfile usually under OSX and Linux
+### assign the docker ip in your Hostfile usually under OSX and Linux
 
     vi /etc/hosts
     
