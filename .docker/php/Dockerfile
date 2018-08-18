@@ -11,7 +11,10 @@ RUN apk add --no-cache --virtual build-dependencies \
     libmcrypt-dev \
     freetype-dev \
     libjpeg-turbo-dev \
+    libpng \
     libpng-dev
+
+RUN apk del libpng-dev
 
 RUN set -xe \
     && apk add --update \
@@ -35,6 +38,8 @@ RUN docker-php-ext-configure gd \
 RUN docker-php-ext-install \
     bcmath \
     mysqli \
+    gd \
+    gd \
     pdo_mysql \
     mcrypt \
     opcache \
