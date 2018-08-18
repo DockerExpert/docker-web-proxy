@@ -19,9 +19,7 @@ to Import a Db at Start Up. Put the SQL Dump into
 
     .docker/database/inital-import
 
-Then run
-    
-    docker-compose up --buiild
+Then run for OSX ```docker-compose -f docker-compose.mac.yml up --build``` or ```docker-compose up --build```
     
 You can check the PHP Settings under:
     
