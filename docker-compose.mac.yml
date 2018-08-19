@@ -22,7 +22,7 @@ services:
     expose:
     - 80
     volumes:
-    - docker-mac-sync:/var/www:rw
+    - docker-mac-sync:/var/www:delegated
     links:
     - php
 
@@ -38,7 +38,7 @@ services:
     ports:
     - 9000:9000
     volumes:
-    - docker-mac-sync:/var/www:rw
+    - docker-mac-sync:/var/www:delegated
 
   database:
     build: .docker/database
