@@ -1,0 +1,64 @@
+version: "3.7"
+
+services:
+
+  webserver-proxy:
+    build: .docker/webserver-proxy
+    image: ${NAMESPACE}:webserver-proxy
+    container_name: ${NAMESPACE}_webserver-proxy
+    restart: always
+    depends_on:
+    - webserver
+    ports:
+    - 80:80
+    - 443:443
+
+  webserver:
+    build: .docker/webserver
+    container_name: ${NAMESPACE}_webserver
+    image: ${NAMESPACE}:webserver
+    restart: always
+    working_dir: /var/www
+    expose:
+    - 80
+    volumes:
+    - docker-mac-sync:/var/www:delegatedw
+    links:
+    - php
+
+  php:
+    build: .docker/php
+    container_name: ${NAMESPACE}_php
+    image: ${NAMESPACE}:php
+    restart: always
+    working_dir: /var/www
+    depends_on:
+    - database
+    - mailhog
+    ports:
+    - 9000:9000
+    volumes:
+    - docker-mac-sync:/var/www:delegated
+
+  database:
+    build: .docker/database
+    container_name: ${NAMESPACE}_database
+    image: ${NAMESPACE}:database
+    ports:
+    - ${DB_PORT}:3306
+    restart: always
+    env_file:
+    - .env
+    volumes:
+    - ./.docker/database/inital-import:/docker-entrypoint-initdb.d:delegated
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: ${NAMESPACE}_mailhog
+    ports:
+    - 8025:8025
+    - 1025:1025
+
+volumes:
+  docker-mac-sync:
+    external: true

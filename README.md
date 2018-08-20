@@ -6,7 +6,7 @@ Nginx HTTPS Proxy using docker-compose for containers based on Apache, PHP 7.0 (
 set your vars in ``.env``
 
     
-### ssign the docker ip in your Hostfile usually under OSX and Linux
+### assign the docker ip in your Hostfile usually under OSX and Linux
 
     vi /etc/hosts
     
@@ -18,9 +18,7 @@ to Import a Db at Start Up. Put the SQL Dump into
 
     .docker/database/inital-import
 
-Then run
-    
-    docker-compose up --buiild
+Then run for OSX ```docker-compose -f docker-compose.mac.yml up --build``` or ```docker-compose up --build```
     
 You can check the PHP Settings under:
     

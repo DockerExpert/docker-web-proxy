@@ -1,4 +1,4 @@
-FROM php:7.0-fpm-alpine
+FROM php:7.1-fpm-alpine3.7
 
 RUN apk update && apk upgrade
 
@@ -11,7 +11,10 @@ RUN apk add --no-cache --virtual build-dependencies \
     libmcrypt-dev \
     freetype-dev \
     libjpeg-turbo-dev \
+    libpng \
     libpng-dev
+
+RUN apk del libpng-dev
 
 RUN set -xe \
     && apk add --update \
@@ -35,6 +38,8 @@ RUN docker-php-ext-configure gd \
 RUN docker-php-ext-install \
     bcmath \
     mysqli \
+    gd \
+    intl \
     pdo_mysql \
     mcrypt \
     opcache \
@@ -69,13 +74,22 @@ ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install Ioncube Loader for php 7.0
-RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+# RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+#    && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
+#    && cp ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/ \
+#    && rm -rf ioncube \
+#    && cd /usr/local/etc/php/conf.d \
+#    && touch 00-ioncube.ini \
+#    && echo "zend_extension=ioncube_loader_lin_7.0.so" > 00-ioncube.ini
+
+# Install Ioncube Loader for php 7.1
+ RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
     && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
-    && cp ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/ \
+    && cp ioncube/ioncube_loader_lin_7.1.so /usr/local/lib/php/extensions/no-debug-non-zts-20160303/ \
     && rm -rf ioncube \
     && cd /usr/local/etc/php/conf.d \
     && touch 00-ioncube.ini \
-    && echo "zend_extension=ioncube_loader_lin_7.0.so" > 00-ioncube.ini
+    && echo "zend_extension=ioncube_loader_lin_7.1.so" > 00-ioncube.ini
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
