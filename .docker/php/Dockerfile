@@ -1,4 +1,4 @@
-FROM php:7.1-fpm-alpine3.7
+FROM php:7.2-fpm-alpine3.7
 
 RUN apk update && apk upgrade
 
@@ -27,25 +27,32 @@ RUN set -xe \
         icu-dev \
         g++
 
-# configure libraries
+## configure libraries
 RUN docker-php-ext-configure gd \
     --enable-gd-native-ttf \
     --with-freetype-dir=/usr/include/freetype2 \
     --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
     && docker-php-ext-configure hash --with-mhash
 
-# install required extensions
+## install required extensions
 RUN docker-php-ext-install \
     bcmath \
     mysqli \
     gd \
     intl \
     pdo_mysql \
-    mcrypt \
     opcache \
     xsl \
     zip \
     soap
+
+# add XDebug for the dev env build
+RUN pecl install xdebug  \
+    && docker-php-ext-enable xdebug
+
+RUN pecl install -o -f redis \
+&&  rm -rf /tmp/pear \
+&&  docker-php-ext-enable redis
 
 COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
 COPY /conf/xdebug.ini  /usr/local/etc/php/conf.d/xdebug.ini
@@ -61,9 +68,6 @@ ENV PATH /usr/local/go/bin:$PATH
 RUN go get github.com/mailhog/mhsendmail
 RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
 
-# add XDebug for the dev env build
-RUN pecl install xdebug  \
-    && docker-php-ext-enable xdebug
 
 # configure app folder
 ENV WORK_DIR ${WORK_DIR:-/var/www}
@@ -72,6 +76,10 @@ WORKDIR $WORK_DIR
 # Set Timezone
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Install Ioncube Loader for php 7.0
 # RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
@@ -83,14 +91,20 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #    && echo "zend_extension=ioncube_loader_lin_7.0.so" > 00-ioncube.ini
 
 # Install Ioncube Loader for php 7.1
- RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
-    && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
-    && cp ioncube/ioncube_loader_lin_7.1.so /usr/local/lib/php/extensions/no-debug-non-zts-20160303/ \
-    && rm -rf ioncube \
-    && cd /usr/local/etc/php/conf.d \
-    && touch 00-ioncube.ini \
-    && echo "zend_extension=ioncube_loader_lin_7.1.so" > 00-ioncube.ini
+# RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+#    && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
+#    && cp ioncube/ioncube_loader_lin_7.1.so /usr/local/lib/php/extensions/no-debug-non-zts-20160303/ \
+#    && rm -rf ioncube \
+#    && cd /usr/local/etc/php/conf.d \
+#    && touch 00-ioncube.ini \
+#    && echo "zend_extension=ioncube_loader_lin_7.1.so" > 00-ioncube.ini
 
-# Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-ENV COMPOSER_ALLOW_SUPERUSER=1
+# Install Ioncube Loader for php 7.2
+# RUN wget https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz
+#    && tar -xvf ioncube_loaders_lin_x86-64.tar.gz
+#    && cp ioncube/ioncube_loader_lin_7.2.so  /usr/local/lib/php/extensions/no-debug-non-zts-20170718/ \
+#    && rm -rf ioncube \
+#    && cd /usr/local/etc/php/conf.d \
+#    && touch 00-ioncube.ini \
+#    && echo "zend_extension=ioncube_loader_lin_7.2.so" > 00-ioncube.ini
+
