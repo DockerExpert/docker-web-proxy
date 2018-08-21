@@ -19,6 +19,9 @@ to Import a Db at Start Up. Put the SQL Dump into
 
     .docker/database/inital-import
 
+Use docker-sync on OSX for better usage of volume mounts
+[Docker-Sync](http://jamescowie.me/blog/2016/12/Docker-Sync/)
+
 Then run for OSX ```docker-compose -f docker-compose.mac.yml up --build``` or ```docker-compose up --build```
     
 You can check the PHP Settings under:
