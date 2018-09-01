@@ -18,25 +18,25 @@ services:
     image: ${NAMESPACE}:webserver
     links:
     - php
-    working_dir: /var/www/
+    working_dir: ${WORKDIR_SERVER}
     expose:
     - 80
     volumes:
-    - ../${WORKDIR}:/var/www:delegated
+    - ../${WORKDIR}:${WORKDIR_SERVER}:delegated
 
   php:
     build:
       context: ./php/${PHP_VERSION}
     container_name: ${NAMESPACE}_php
     image: ${NAMESPACE}:php
-    working_dir: /var/www
+    working_dir: ${WORKDIR_SERVER}
     depends_on:
     - database
     - mailhog
     ports:
     - 9000:9000
     volumes:
-    - ../${WORKDIR}:/var/www:delegated
+    - ../${WORKDIR}:${WORKDIR_SERVER}:delegated
 
   database:
     build: ./database
