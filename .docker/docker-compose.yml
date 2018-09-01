@@ -3,10 +3,9 @@ version: "3.7"
 services:
 
   webserver-proxy:
-    build: .docker/webserver-proxy
+    build: ./webserver-proxy
     image: ${NAMESPACE}:webserver-proxy
     container_name: ${NAMESPACE}_webserver-proxy
-    restart: always
     depends_on:
     - webserver
     ports:
@@ -14,23 +13,22 @@ services:
     - 443:443
 
   webserver:
-    build: .docker/webserver
+    build: ./webserver
     container_name: ${NAMESPACE}_webserver
     image: ${NAMESPACE}:webserver
-    restart: always
-    working_dir: /var/www
+    links:
+    - php
+    working_dir: /var/www/
     expose:
     - 80
     volumes:
-    - .:/var/www:delegated
-    links:
-    - php
+    - ../${WORKDIR}:/var/www:delegated
 
   php:
-    build: .docker/php
+    build:
+      context: ./php/version_${PHP_VERSION}
     container_name: ${NAMESPACE}_php
     image: ${NAMESPACE}:php
-    restart: always
     working_dir: /var/www
     depends_on:
     - database
@@ -38,23 +36,34 @@ services:
     ports:
     - 9000:9000
     volumes:
-    - .:/var/www:delegated
+    - ../${WORKDIR}:/var/www:delegated
 
   database:
-    build: .docker/database
+    build: ./database
     container_name: ${NAMESPACE}_database
     image: ${NAMESPACE}:database
-    ports:
-    - ${DB_PORT}:3306
-    restart: always
-    env_file:
-    - .env
+    expose:
+    - 3306
+    environment:
+      MYSQL_DATABASE: ${DATABASE}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
     volumes:
-    - ./.docker/database/inital-import:/docker-entrypoint-initdb.d:delegated
+    - ./database/inital-import:/docker-entrypoint-initdb.d:rw
+
+  redis:
+    image: redis:alpine
+    container_name: ${NAMESPACE}_redis
+    expose:
+    - 6379
+    sysctls:
+      net.core.somaxconn: '511'
 
   mailhog:
     image: mailhog/mailhog:latest
     container_name: ${NAMESPACE}_mailhog
+    expose:
+    - 1025
     ports:
     - 8025:8025
-    - 1025:1025

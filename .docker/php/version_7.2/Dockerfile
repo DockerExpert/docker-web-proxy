@@ -55,23 +55,18 @@ RUN pecl install -o -f redis \
 &&  docker-php-ext-enable redis
 
 COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
-COPY /conf/xdebug.ini  /usr/local/etc/php/conf.d/xdebug.ini
+#COPY /conf/xdebug.ini  /usr/local/etc/php/conf.d/xdebug.ini
 
-RUN set -x \
-    && deluser www-data \
-    && addgroup -g 500 -S www-data \
-    && adduser -u 500 -D -S -G www-data www-data
+#RUN set -x \
+#    && deluser www-data \
+#    && addgroup -g 500 -S www-data \
+#    && adduser -u 500 -D -S -G www-data www-data
 
 # add mhsendmail (sendmail is forced to use smtp)
 RUN curl -Lsf 'https://storage.googleapis.com/golang/go1.10.3.linux-amd64.tar.gz' | tar -C '/usr/local' -xvzf -
 ENV PATH /usr/local/go/bin:$PATH
 RUN go get github.com/mailhog/mhsendmail
 RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
-
-
-# configure app folder
-ENV WORK_DIR ${WORK_DIR:-/var/www}
-WORKDIR $WORK_DIR
 
 # Set Timezone
 ENV TZ=Europe/Berlin
