@@ -47,7 +47,7 @@ RUN docker-php-ext-install \
     soap
 
 # add XDebug for the dev env build
-#RUN pecl install xdebug  \
+#RUN pecl install xdebug-2.5.5  \
 #    && docker-php-ext-enable xdebug
 
 RUN pecl install -o -f redis \
@@ -105,4 +105,22 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 #    && cd /usr/local/etc/php/conf.d \
 #    && touch 00-ioncube.ini \
 #    && echo "zend_extension=ioncube_loader_lin_7.2.so" > 00-ioncube.ini
+
+
+RUN apk del \
+    icu \
+    go \
+    git \
+    libc-dev \
+    libxslt-dev \
+    libmcrypt-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng \
+    libpng-dev \
+    make \
+    $PHPIZE_DEPS \
+    zlib-dev \
+    icu-dev \
+    g++
 

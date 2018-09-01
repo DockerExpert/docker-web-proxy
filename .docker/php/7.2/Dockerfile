@@ -14,8 +14,6 @@ RUN apk add --no-cache --virtual build-dependencies \
     libpng \
     libpng-dev
 
-RUN apk del libpng-dev
-
 RUN set -xe \
     && apk add --update \
         icu \
@@ -105,4 +103,22 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 #    && cd /usr/local/etc/php/conf.d \
 #    && touch 00-ioncube.ini \
 #    && echo "zend_extension=ioncube_loader_lin_7.2.so" > 00-ioncube.ini
+
+RUN apk del \
+    icu \
+    go \
+    git \
+    libc-dev \
+    libxslt-dev \
+    libmcrypt-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng \
+    libpng-dev \
+    make \
+    $PHPIZE_DEPS \
+    zlib-dev \
+    icu-dev \
+    g++
+
 
