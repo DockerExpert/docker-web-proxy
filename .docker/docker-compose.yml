@@ -27,8 +27,8 @@ services:
   php:
     build:
       context: ./php/${PHP_VERSION}
-    container_name: ${NAMESPACE}_php
-    image: ${NAMESPACE}:php
+    container_name: ${NAMESPACE}_php_${PHP_VERSION}
+    image: ${NAMESPACE}:php_${PHP_VERSION}
     working_dir: ${WORKDIR_SERVER}
     depends_on:
     - database
