@@ -50,6 +50,9 @@ RUN docker-php-ext-install \
 #RUN pecl install xdebug  \
 #    && docker-php-ext-enable xdebug
 
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
 &&  docker-php-ext-enable redis
