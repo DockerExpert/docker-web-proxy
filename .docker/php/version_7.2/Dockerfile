@@ -47,8 +47,8 @@ RUN docker-php-ext-install \
     soap
 
 # add XDebug for the dev env build
-RUN pecl install xdebug  \
-    && docker-php-ext-enable xdebug
+#RUN pecl install xdebug  \
+#    && docker-php-ext-enable xdebug
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
