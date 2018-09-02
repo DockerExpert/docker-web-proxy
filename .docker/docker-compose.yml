@@ -33,8 +33,6 @@ services:
     depends_on:
     - database
     - mailhog
-    ports:
-    - 9000:9000
     volumes:
     - ../${WORKDIR}:${WORKDIR_SERVER}:delegated
 
@@ -42,10 +40,8 @@ services:
     build: ./database
     container_name: ${NAMESPACE}_database
     image: ${NAMESPACE}:database
-    #    expose:
-    #    - 3306
     ports:
-    - 3306:3306
+    - ${DATABASE_PORT}:3306
     environment:
       MYSQL_DATABASE: ${DATABASE}
       MYSQL_USER: ${DATABASE_USER}

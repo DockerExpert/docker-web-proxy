@@ -47,15 +47,16 @@ RUN docker-php-ext-install \
     soap
 
 # add XDebug for the dev env build
-#RUN pecl install xdebug-2.5.5  \
-#    && docker-php-ext-enable xdebug
+RUN pecl install xdebug-2.5.5  \
+    && docker-php-ext-enable xdebug
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
 &&  docker-php-ext-enable redis
 
 COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
-#COPY /conf/xdebug.ini  /usr/local/etc/php/conf.d/xdebug.ini
+COPY /conf/xdebug.ini  /usr/local/etc/php/conf.d/xdebug.ini
+#COPY /conf/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -76,8 +77,8 @@ ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-ENV COMPOSER_ALLOW_SUPERUSER=1
+#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+#ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Install Ioncube Loader for php 7.0
 # RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
