@@ -44,6 +44,7 @@ RUN docker-php-ext-install \
     opcache \
     xsl \
     zip \
+    mcrypt \
     soap
 
 # add XDebug for the dev env build
@@ -56,7 +57,7 @@ RUN pecl install -o -f redis \
 
 COPY /conf/php-ini-overrides.ini  /usr/local/etc/php/conf.d/php-ini-overrides.ini
 COPY /conf/xdebug.ini  /usr/local/etc/php/conf.d/xdebug.ini
-#COPY /conf/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY /conf/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -75,6 +76,14 @@ RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
 # Set Timezone
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Install Magerun
+RUN wget https://files.magerun.net/n98-magerun.phar \
+    && mv n98-magerun.phar /usr/local/bin/n98-magerun.phar\
+    && chmod +x /usr/local/bin/n98-magerun.phar
+
+# Deploy modules for modman ###
+RUN bash -c 'bash < <(curl -s -L https://raw.github.com/colinmollenhour/modman/master/modman-installer)'
 
 # Composer
 #RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
