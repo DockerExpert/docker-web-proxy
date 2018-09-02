@@ -9,9 +9,12 @@ to Import a Db at Start Up. Put the SQL Dump into
 
     .docker/database/inital-import
 
-You can check the PHP Settings under:
-    https://localhost/info.php
+# start docker
+    docker-compose build
+    docker-compose up -d
     
-### All outcoming mails are sent to MailHog
-    http://localhost:8025
+### All outgoing mails are sent to MailHog
+    http://app.doc:8025
+    
+change ``sendmail_path``in ``php-ini-overrides.ini`` to change this behaviour
    
